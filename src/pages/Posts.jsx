@@ -1,7 +1,17 @@
 import { Icon } from "@iconify/react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
+const getPosts = async () => {
+  return (await fetch("https://codebuddy.review/posts")).json();
+};
+
 const Posts = () => {
+  useEffect(() => {
+    getPosts().then((res) => {
+      console.log("res: ", res);
+    });
+  });
   return (
     <div className="rounded-lg bg-gray-50 p-7 text-gray-900 shadow-lg">
       <h1 className="mb-7 text-4xl font-bold">Posts</h1>
