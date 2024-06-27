@@ -14,45 +14,58 @@ import PropTypes from "prop-types";
 import FormChangeButtons from "./FormChangeButtons";
 import { useNavigate } from "react-router-dom";
 
+const validate = (countryCode, phoneNumber, acceptTerms) => {
+  const newError = {};
+  if (!countryCode) {
+    newError.countryCode = "Select country code!";
+  }
+  if (!phoneNumber || phoneNumber.length !== 10) {
+    newError.phoneNumber = "Enter a valid phone number of 10 digit!";
+  }
+  if (!acceptTerms) {
+    newError.acceptTerms = "You must accept the terms and conditions!";
+  }
+  return newError;
+};
+
+const postData = async (formData) => {
+  return (
+    await fetch("https://codebuddy.review/submit", {
+      method: "POST",
+      body: JSON.stringify(formData),
+    })
+  ).json();
+};
+
 const Form3 = ({ setSelectedTab, formData, setFormData }) => {
   const [countryCode, setCountryCode] = useState(formData.countryCode);
   const [phoneNumber, setPhoneNumber] = useState(formData.phoneNumber);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState({});
   const navigate = useNavigate();
-
-  const validate = () => {
-    const newError = {};
-    if (!countryCode) {
-      newError.countryCode = "Select country code!";
-    }
-    if (!phoneNumber || phoneNumber.length !== 10) {
-      newError.phoneNumber = "Add 10 digit phone number!";
-    }
-    if (!acceptTerms) {
-      newError.acceptTerms = "You must accept the terms and conditions!";
-    }
-    return newError;
-  };
+  const validationErrors = validate(countryCode, phoneNumber, acceptTerms);
 
   const handleSaveAndSubmit = () => {
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length === 0) {
-      setError({});
-      setFormData((prev) => ({ ...prev, countryCode, phoneNumber }));
-      console.log("formData: ", { ...formData, countryCode, phoneNumber });
+    if (handleSave()) {
+      postData({ ...formData, countryCode, phoneNumber })
+        .then((res) => {
+          console.log("response: ", res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       navigate("/posts");
-    } else {
-      setError(validationErrors);
     }
   };
 
   const handleSave = () => {
-    const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       setError({});
+      setFormData((prev) => ({ ...prev, countryCode, phoneNumber }));
+      return true;
     } else {
       setError(validationErrors);
+      return false;
     }
   };
 
@@ -64,7 +77,10 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
           <Select
             labelId="countryCode-label"
             value={countryCode}
-            onChange={(e) => setCountryCode(e.target.value)}
+            onChange={(e) => {
+              setCountryCode(e.target.value);
+              setError({});
+            }}
             label="Country Code"
             required
           >
@@ -80,12 +96,15 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
           variant="outlined"
           fullWidth
           required
-          type="text"
+          type="number"
           size="small"
           value={phoneNumber}
           error={!!error.phoneNumber}
           helperText={error.phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          onChange={(e) => {
+            setPhoneNumber(e.target.value);
+            setError({});
+          }}
         />
       </Grid>
       <Grid item xs={12}>
@@ -93,7 +112,10 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
           control={
             <Checkbox
               checked={acceptTerms}
-              onChange={(e) => setAcceptTerms(e.target.checked)}
+              onChange={(e) => {
+                setAcceptTerms(e.target.checked);
+                setError({});
+              }}
               required
             />
           }

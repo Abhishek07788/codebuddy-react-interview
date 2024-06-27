@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
+import { Link as NavLink } from "react-router-dom";
 import Form1 from "../components/Form1";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Form2 from "../components/Form2";
 import Form3 from "../components/Form3";
-import { Grid, Stack, Tab, Tabs } from "@mui/material";
+import { Grid, Link, Stack, Tab, Tabs, Typography } from "@mui/material";
 
 const initialFormData = {
   emailId: "",
@@ -20,29 +20,44 @@ const Home = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
 
-  const handleTabChange = (_, newValue) => {
+  const handleTabChange = useCallback((_, newValue) => {
     setSelectedTab(newValue);
-  };
+  }, []);
 
   return (
-    <Grid className="rounded-lg bg-gray-50 p-7 text-gray-900 shadow-lg">
+    <Grid borderRadius={2} boxShadow={3} bgcolor={"#fff"} p={3}>
+      {/* Header */}
       <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
-        <h1 className="mb-4 flex items-center text-4xl font-bold">
-          <Icon icon="mdi:home" className="mr-2" />
+        <Typography variant="h4" display={"flex"} fontWeight={"bold"} mb={2}>
+          <Icon icon="mdi:home" fontSize={40} />
           Home
-        </h1>
-        <Link to="/posts" className="flex items-center text-blue-600 hover:underline">
+        </Typography>
+        <Link
+          component={NavLink}
+          to="/posts"
+          sx={{
+            mb: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            color: "blue",
+            textDecoration: "none",
+            "&:hover": { textDecoration: "underline" },
+          }}
+        >
           Posts
-          <Icon icon="mdi:arrow-right" className="ml-2" />
+          <Icon icon="mdi:arrow-right" />
         </Link>
       </Stack>
 
+      {/* Tab */}
       <Tabs value={selectedTab} onChange={handleTabChange}>
         <Tab label="Form 1" />
-        <Tab label="Form 2" disabled={!formData.firstName || !formData.address} />
-        <Tab label="Form 3" disabled={!formData.countryCode || !formData.phoneNumber} />
+        <Tab label="Form 2" disabled={!formData.emailId || !formData.password} />
+        <Tab label="Form 3" disabled={!formData.firstName || !formData.address} />
       </Tabs>
 
+      {/* Forms */}
       <Grid p={2}>
         {selectedTab === 0 && (
           <Form1 setSelectedTab={setSelectedTab} formData={formData} setFormData={setFormData} />

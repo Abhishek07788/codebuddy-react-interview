@@ -19,7 +19,7 @@ const FormChangeButtons = ({
       >
         Back
       </Button>
-      <Box>
+      <Box mr={-2}>
         <Button size="small" onClick={handleSave} variant="contained">
           Save
         </Button>
