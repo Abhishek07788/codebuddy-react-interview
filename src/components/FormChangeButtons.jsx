@@ -10,17 +10,18 @@ const FormChangeButtons = ({
   isSubmit,
 }) => {
   return (
-    <Stack p={2} width={"100%"} direction={"row"} justifyContent={"space-between"}>
+    <Stack py={2} mt={1.5} width={"100%"} direction={"row"} justifyContent={"space-between"}>
       <Button
+        sx={{ ml: 3 }}
         size="small"
-        variant={isBackDisabled ? "outlined" : "contained"}
+        variant={"outlined"}
         onClick={handleBack}
         disabled={isBackDisabled}
       >
         Back
       </Button>
-      <Box mr={-2}>
-        <Button size="small" onClick={handleSave} variant="contained">
+      <Box>
+        <Button size="small" onClick={handleSave} variant="outlined">
           Save
         </Button>
         <Button

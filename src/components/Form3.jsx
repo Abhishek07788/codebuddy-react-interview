@@ -19,7 +19,7 @@ const validate = (countryCode, phoneNumber, acceptTerms) => {
   if (!countryCode) {
     newError.countryCode = "Select country code!";
   }
-  if (!phoneNumber || phoneNumber.length !== 10) {
+  if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
     newError.phoneNumber = "Enter a valid phone number of 10 digit!";
   }
   if (!acceptTerms) {
@@ -70,9 +70,9 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={3}>
       <Grid item xs={12}>
-        <FormControl fullWidth variant="outlined" size="small" error={!!error.countryCode}>
+        <FormControl fullWidth variant="outlined" size="small" required error={!!error.countryCode}>
           <InputLabel id="countryCode-label">Country Code</InputLabel>
           <Select
             labelId="countryCode-label"
@@ -82,7 +82,6 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
               setError({});
             }}
             label="Country Code"
-            required
           >
             <MenuItem value="+91">India (+91)</MenuItem>
             <MenuItem value="+1">America (+1)</MenuItem>
@@ -127,7 +126,7 @@ const Form3 = ({ setSelectedTab, formData, setFormData }) => {
         handleBack={() => setSelectedTab((prev) => prev - 1)}
         handleSave={handleSave}
         handleSaveAndNext={handleSaveAndSubmit}
-        isNextDisabled={!countryCode || !phoneNumber || !acceptTerms}
+        isNextDisabled={!countryCode || phoneNumber.length !== 10 || !acceptTerms}
         isSubmit
       />
     </Grid>
